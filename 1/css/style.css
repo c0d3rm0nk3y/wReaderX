@@ -1,0 +1,47 @@
+body {
+  padding-top: 60px;
+}
+
+.summaries {
+  border: 0px solid blue;
+  box-sizing: border-box;
+  height: 100%;
+
+}
+.summary {
+  color: #222;
+}
+.summary .icon {}
+.summary .pub-name {
+  font-size: 0.9em;
+}
+.summary .pub-date {
+  font-size: 0.9em;
+  text-align: right;
+}
+.summary .title {}
+.summary .description {}
+
+
+.entries {
+  border: 0px solid red;
+  box-sizing: border-box;
+  height: 100%;
+}
+.entry .pub-date {
+  font-size: 0.9em;
+}
+.entry .actions {
+  text-align: right;
+}
+.entry .title {}
+.entry .author {}
+.entry .pub-name {}
+.entry hr {}
+.entry .post-content {}
+
+.well.active {
+  background-color: #e4e4e4;
+  border: 1px solid #eee;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
