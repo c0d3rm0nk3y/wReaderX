@@ -63,7 +63,20 @@ WReader.itemsController = Em.ArrayProxy.create({
   }
 });
 
+
+
+WReader.itemsController.addObserver('selectedItem', function() {
+  var curScrollPos = $('.entries').scrollTop();
+  var itemTop = $('.entry.active').offset().top - 60;
+  $(".entries").animate({"scrollTop": curScrollPos + itemTop}, 200);
+  curScrollPos = $('.summaries').scrollTop();
+  itemTop = $('.summary.active').offset().top - 60;
+  $(".summaries").animate({"scrollTop": curScrollPos + itemTop}, 200);
+  //console.log(entriesPos, selectedItemTop);
+});
+
 WReader.SummaryListView = Em.View.extend({
+  tagName: 'article',
   classNames: ['well', 'summary'],
   classNameBindings: ['active', 'read', 'prev', 'next'],
   click: function(evt) {
@@ -88,6 +101,7 @@ WReader.SummaryListView = Em.View.extend({
 });
 
 WReader.EntryListView = Em.View.extend({
+  tagName: 'article',
   classNames: ['well', 'entry'],
   classNameBindings: ['active', 'read', 'prev', 'next'],
   active: function() {
@@ -103,7 +117,53 @@ WReader.EntryListView = Em.View.extend({
   }.property('WReader.itemsController.@each.read'),
   formattedDate: function() {
     var date = this.get('content').get('pub_date');
-    return moment(date).format("MMMM Do YYYY, h:mm a");
+    var result = moment(date).format("MMMM Do YYYY, h:mm a");
+    result += " (" + moment(date).fromNow() + ")";
+    return result;
+  }.property('WReader.itemsController.selectedItem')
+});
+
+WReader.NavControlsView = Em.View.extend({
+  navUp: function(event) {
+    WReader.itemsController.prev();
+  },
+  navDown: function(event) {
+    WReader.itemsController.next();
+  },
+  toggleStar: function(event) {
+    var selectedItem = WReader.itemsController.get('selectedItem');
+    var starred = selectedItem.get('starred');
+    selectedItem.set('starred', !starred);
+  },
+  toggleRead: function(event) {
+    var selectedItem = WReader.itemsController.get('selectedItem');
+    var read = selectedItem.get('read');
+    selectedItem.set('read', !read);
+  },
+  starClass: function() {
+    var selectedItem = WReader.itemsController.get('selectedItem');
+    if (selectedItem) {
+      if (selectedItem.get('starred')) {
+        return 'icon-star';
+      }
+    }
+    return 'icon-star-empty';
+  }.property('WReader.itemsController.selectedItem.starred'),
+  readClass: function() {
+    var selectedItem = WReader.itemsController.get('selectedItem');
+    if (selectedItem) {
+      if (selectedItem.get('read')) {
+        return 'icon-ok-sign';
+      }
+    }
+    return 'icon-ok-circle';
+  }.property('WReader.itemsController.selectedItem.read'),
+  buttonDisabled: function() {
+    var selectedItem = WReader.itemsController.get('selectedItem');
+    if (selectedItem) {
+      return false;
+    }
+    return true;
   }.property('WReader.itemsController.selectedItem')
 });
 
@@ -114,7 +174,6 @@ function handleBodyKeyDown(evt) {
     case 40: // down arrow
     case 74: // j
       WReader.itemsController.next();
-      event.preventDefault();
       break;
 
     case 33: // PgUp
@@ -122,7 +181,6 @@ function handleBodyKeyDown(evt) {
     case 38: // up arrow
     case 75: // k
       WReader.itemsController.prev();
-      event.preventDefault();
       break;
     }
 }
