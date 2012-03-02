@@ -1,14 +1,10 @@
 body {
   padding-top: 60px;
-  overflow-y: hidden;
 }
 
 .summaries {
-  border: 0px solid blue;
-  box-sizing: border-box;
-  height: 100%;
-
 }
+
 .summary {
   color: #222;
 }
@@ -34,12 +30,19 @@ body {
 .summary .title {}
 .summary .description {}
 
-
 .entries {
-  border: 0px solid red;
-  box-sizing: border-box;
-  height: 100%;
 }
+
+.entry {
+}
+
+.entry.read {
+}
+
+.entry.active {
+  border: 1px solid #222;
+}
+
 .entry .pub-date {
   font-size: 0.9em;
 }
@@ -85,14 +88,4 @@ body {
 
 .entry .actions .read input[type=checkbox]:checked {
   background-position: -72px -96px
-}
-
-.entries .well.prev {
-  position: absolute;
-  top: -1000px;
-}
-
-.entries .well.next {
-  position: absolute;
-  top: 1000px;
 }

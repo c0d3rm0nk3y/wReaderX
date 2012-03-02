@@ -36,7 +36,7 @@
   <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
  
   <header>
-     <script type="text/x-handlebars">
+    <script type="text/x-handlebars">
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
@@ -70,7 +70,7 @@
       <div class="span4 summaries">
          <script type="text/x-handlebars">
           {{#each WReader.itemsController}}
-            {{#view WReader.ItemListView contentBinding="this"}}
+            {{#view WReader.SummaryListView contentBinding="this"}}
               <div class="row-fluid">
                 <div class="span4 pub-name">
                   {{content.pub_name}}
@@ -87,62 +87,25 @@
       </div>
       <div class="span8 entries">
          <script type="text/x-handlebars">
-
-          {{#if WReader.selectedItemController.prev}}
-            {{#view WReader.ItemView}}
-              <div class="row-fluid next">
-                <div class="span8">{{formattedDate}}</div>
-                <div class="span4 actions">
-                  {{view Em.Checkbox class="read" valueBinding="content.read"}}
-                  {{view Em.Checkbox class="star" valueBinding="content.starred"}}
-                  <a {{bindAttr href="content.item_link"}}><i class="icon-share"></i></a>
+         {{#if WReader.itemsController.selectedItem}}
+           {{#each WReader.itemsController}}
+              {{#view WReader.EntryListView contentBinding="this"}}
+                <div class="row-fluid">
+                  <div class="span8">{{formattedDate}}</div>
+                  <div class="span4 actions">
+                    {{view Em.Checkbox class="read" valueBinding="content.read"}}
+                    {{view Em.Checkbox class="star" valueBinding="content.starred"}}
+                    <a target="_blank" {{bindAttr href="content.item_link"}}><i class="icon-share"></i></a>
+                  </div>
                 </div>
-              </div>
-              <h2>{{content.title}}</h2>
-              <span class="author">{{content.pub_author}}</span> - <span class="pub-name">{{content.pub_name}}</span>
-              <hr />
-              <p class="post-content">{{content.content}}</p>
-            {{/view}}
+                <h2>{{content.title}}</h2>
+                <span class="author">{{content.pub_author}}</span> - <span class="pub-name">{{content.pub_name}}</span>
+                <hr />
+                <p class="post-content">{{content.content}}</p>
+              {{/view}}
+            {{/each}}
           {{else}}
-            <div class='well prev'>prev item</div>
-          {{/if}}
-
-          {{#if WReader.selectedItemController.content}}
-            {{#view WReader.ItemView}}
-              <div class="row-fluid">
-                <div class="span8">{{formattedDate}}</div>
-                <div class="span4 actions">
-                  {{view Em.Checkbox class="read" valueBinding="content.read"}}
-                  {{view Em.Checkbox class="star" valueBinding="content.starred"}}
-                  <a {{bindAttr href="content.item_link"}}><i class="icon-share"></i></a>
-                </div>
-              </div>
-              <h2>{{content.title}}</h2>
-              <span class="author">{{content.pub_author}}</span> - <span class="pub-name">{{content.pub_name}}</span>
-              <hr />
-              <p class="post-content">{{content.content}}</p>
-            {{/view}}
-          {{else}}
-            <div>nothing here</div>
-          {{/if}}
-
-          {{#if WReader.selectedItemController.next}}
-            {{#view WReader.ItemView}}
-              <div class="row-fluid next">
-                <div class="span8">{{formattedDate}}</div>
-                <div class="span4 actions">
-                  {{view Em.Checkbox class="read" valueBinding="content.read"}}
-                  {{view Em.Checkbox class="star" valueBinding="content.starred"}}
-                  <a {{bindAttr href="content.item_link"}}><i class="icon-share"></i></a>
-                </div>
-              </div>
-              <h2>{{content.title}}</h2>
-              <span class="author">{{content.pub_author}}</span> - <span class="pub-name">{{content.pub_name}}</span>
-              <hr />
-              <p class="post-content">{{content.content}}</p>
-            {{/view}}
-          {{else}}
-            <div class='well next'>next item</div>
+            <div></div>
           {{/if}}
         </script>
       </div>
