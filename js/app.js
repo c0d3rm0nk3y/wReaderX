@@ -37,42 +37,66 @@ WReader.itemsController = Em.ArrayProxy.create({
     return this.filterProperty('starred', true).get('length');
   }.property('@each.starred'),
   
+});
+
+WReader.selectedItemController = Em.Object.create({
+  selectedItem: null,
   select: function(item) {
-    item.set('read', true);
     this.set('selectedItem', item);
+    this.toggleRead(true);
     var url = location.origin + location.pathname + '';
     var item_url = "#" + item.get('item_id');
     history.pushState(item.get('item_id'), 'title', url + item_url);
   },
-  selectedItem: null,
+
+  toggleRead: function(read) {
+    if (read === true) {
+      this.selectedItem.set('read', true);
+    } else if (read === false) {
+      this.selectedItem.set('read', false);
+    } else {
+      var isRead = this.selectedItem.get('read');
+      this.selectedItem.set('read', !isRead);
+    }
+  },
+
+  toggleStar: function(star) {
+    if (star === true) {
+      this.selectedItem.set('star', true);
+    } else if (star === false) {
+      this.selectedItem.set('star', false);
+    } else {
+      var isStarred = this.selectedItem.get('starred');
+      this.selectedItem.set('starred', !isStarred);
+    }
+  },
 
   next: function() {
-    var currentIndex = this.content.indexOf(this.get('selectedItem'));
-    var nextItem = this.content[currentIndex + 1];
+    var currentIndex = WReader.itemsController.content.indexOf(this.get('selectedItem'));
+    var nextItem = WReader.itemsController.content[currentIndex + 1];
     if (nextItem) {
       this.select(nextItem);
     }
   },
 
   prev: function() {
-    var currentIndex = this.content.indexOf(this.get('selectedItem'));
-    var nextItem = this.content[currentIndex - 1];
+    var currentIndex = WReader.itemsController.content.indexOf(this.get('selectedItem'));
+    var nextItem = WReader.itemsController.content[currentIndex - 1];
     if (nextItem) {
       this.select(nextItem);
     }
   }
 });
 
-
-
-WReader.itemsController.addObserver('selectedItem', function() {
+WReader.selectedItemController.addObserver('selectedItem', function() {
+  //TODO: could change to use document.querySelector
   var curScrollPos = $('.entries').scrollTop();
   var itemTop = $('.entry.active').offset().top - 60;
   $(".entries").animate({"scrollTop": curScrollPos + itemTop}, 200);
+
   curScrollPos = $('.summaries').scrollTop();
   itemTop = $('.summary.active').offset().top - 60;
   $(".summaries").animate({"scrollTop": curScrollPos + itemTop}, 200);
-  //console.log(entriesPos, selectedItemTop);
 });
 
 WReader.SummaryListView = Em.View.extend({
@@ -81,15 +105,15 @@ WReader.SummaryListView = Em.View.extend({
   classNameBindings: ['active', 'read', 'prev', 'next'],
   click: function(evt) {
     var content = this.get('content');
-    WReader.itemsController.select(content);
+    WReader.selectedItemController.select(content);
   },
   active: function() {
-    var selectedItem = WReader.itemsController.get('selectedItem');
+    var selectedItem = WReader.selectedItemController.get('selectedItem');
     var content = this.get('content');
     if (content === selectedItem) {
       return true;
     }
-  }.property('WReader.itemsController.selectedItem'),
+  }.property('WReader.selectedItemController.selectedItem'),
   read: function() {
     var read = this.get('content').get('read');
     return read;
@@ -97,7 +121,7 @@ WReader.SummaryListView = Em.View.extend({
   formattedDate: function() {
     var date = this.get('content').get('pub_date');
     return moment(date).format("MMMM Do YYYY, h:mm a");
-  }.property('WReader.itemsController.selectedItem')
+  }.property('WReader.selectedItemController.selectedItem')
 });
 
 WReader.EntryListView = Em.View.extend({
@@ -105,12 +129,12 @@ WReader.EntryListView = Em.View.extend({
   classNames: ['well', 'entry'],
   classNameBindings: ['active', 'read', 'prev', 'next'],
   active: function() {
-    var selectedItem = WReader.itemsController.get('selectedItem');
+    var selectedItem = WReader.selectedItemController.get('selectedItem');
     var content = this.get('content');
     if (content === selectedItem) {
       return true;
     }
-  }.property('WReader.itemsController.selectedItem'),
+  }.property('WReader.selectedItemController.selectedItem'),
   read: function() {
     var read = this.get('content').get('read');
     return read;
@@ -120,51 +144,70 @@ WReader.EntryListView = Em.View.extend({
     var result = moment(date).format("MMMM Do YYYY, h:mm a");
     result += " (" + moment(date).fromNow() + ")";
     return result;
-  }.property('WReader.itemsController.selectedItem')
+  }.property('WReader.selectedItemController.selectedItem')
+});
+
+WReader.EntryItemView = Em.View.extend({
+  tagName: 'article',
+  classNames: ['well', 'entry'],
+  classNameBindings: ['active', 'read', 'prev', 'next'],
+  active: function() {
+    var selectedItem = WReader.selectedItemController.get('selectedItem');
+    var content = this.get('content');
+    if (content === selectedItem) {
+      return true;
+    }
+  }.property('WReader.selectedItemController.selectedItem'),
+  read: function() {
+    var read = this.get('content').get('read');
+    return read;
+  }.property('WReader.itemsController.@each.read'),
+  formattedDate: function() {
+    var date = this.get('content').get('pub_date');
+    var result = moment(date).format("MMMM Do YYYY, h:mm a");
+    result += " (" + moment(date).fromNow() + ")";
+    return result;
+  }.property('WReader.selectedItemController.selectedItem')
 });
 
 WReader.NavControlsView = Em.View.extend({
   navUp: function(event) {
-    WReader.itemsController.prev();
+    WReader.selectedItemController.prev();
   },
   navDown: function(event) {
-    WReader.itemsController.next();
+    WReader.selectedItemController.next();
   },
   toggleStar: function(event) {
-    var selectedItem = WReader.itemsController.get('selectedItem');
-    var starred = selectedItem.get('starred');
-    selectedItem.set('starred', !starred);
+    WReader.selectedItemController.toggleStar();
   },
   toggleRead: function(event) {
-    var selectedItem = WReader.itemsController.get('selectedItem');
-    var read = selectedItem.get('read');
-    selectedItem.set('read', !read);
+    WReader.selectedItemController.toggleRead();
   },
   starClass: function() {
-    var selectedItem = WReader.itemsController.get('selectedItem');
+    var selectedItem = WReader.selectedItemController.get('selectedItem');
     if (selectedItem) {
       if (selectedItem.get('starred')) {
         return 'icon-star';
       }
     }
     return 'icon-star-empty';
-  }.property('WReader.itemsController.selectedItem.starred'),
+  }.property('WReader.selectedItemController.selectedItem.starred'),
   readClass: function() {
-    var selectedItem = WReader.itemsController.get('selectedItem');
+    var selectedItem = WReader.selectedItemController.get('selectedItem');
     if (selectedItem) {
       if (selectedItem.get('read')) {
         return 'icon-ok-sign';
       }
     }
     return 'icon-ok-circle';
-  }.property('WReader.itemsController.selectedItem.read'),
+  }.property('WReader.selectedItemController.selectedItem.read'),
   buttonDisabled: function() {
-    var selectedItem = WReader.itemsController.get('selectedItem');
+    var selectedItem = WReader.selectedItemController.get('selectedItem');
     if (selectedItem) {
       return false;
     }
     return true;
-  }.property('WReader.itemsController.selectedItem')
+  }.property('WReader.selectedItemController.selectedItem')
 });
 
 function handleBodyKeyDown(evt) {
@@ -173,14 +216,14 @@ function handleBodyKeyDown(evt) {
     case 39: // right arrow
     case 40: // down arrow
     case 74: // j
-      WReader.itemsController.next();
+      WReader.selectedItemController.next();
       break;
 
     case 33: // PgUp
     case 37: // left arrow
     case 38: // up arrow
     case 75: // k
-      WReader.itemsController.prev();
+      WReader.selectedItemController.prev();
       break;
     }
 }
@@ -196,7 +239,7 @@ window.addEventListener('popstate', handlePopState, false);
 /*
  Helper test methods to add a couple of items to our list
 */
-for (var i = 0; i < 20; i++) {
+for (var i = 0; i < 101; i++) {
   var item = WReader.Item.create({ item_id: 1, title: 'Item A',
     pub_name: 'Feed', pub_author: 'Author', pub_date: new Date(1000000000000),
     short_desc: 'Short Desc', content: 'Lorem Ipsum, yah it\'s all that!',
