@@ -3,7 +3,7 @@ var WReader = Em.Application.create();
 WReader.Item = Em.Object.extend({
   read: false,
   starred: false,
-  item_id: 12345,
+  item_id: null,
   title: null,
   pub_name: null,
   pub_author: null,
@@ -40,6 +40,9 @@ WReader.itemsController = Em.ArrayProxy.create({
   select: function(item) {
     item.set('read', true);
     this.set('selectedItem', item);
+    var url = location.origin + location.pathname + '';
+    var item_url = "#" + item.get('item_id');
+    history.pushState(item.get('item_id'), 'title', url + item_url);
   },
   selectedItem: null,
 
@@ -124,8 +127,12 @@ function handleBodyKeyDown(evt) {
     }
 }
 
-document.addEventListener('keydown', handleBodyKeyDown, false);
+function handlePopState(evt) {
+  console.log("Pop State", evt);
+}
 
+document.addEventListener('keydown', handleBodyKeyDown, false);
+window.addEventListener('popstate', handlePopState, false);
 
 
 /*
