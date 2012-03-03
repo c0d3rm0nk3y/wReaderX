@@ -16,7 +16,8 @@
   <meta name="description" content="">
 
   <!-- Mobile viewport optimized: h5bp.com/viewport -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
 
@@ -71,14 +72,24 @@
     
       <script type="text/x-handlebars">
         {{#view WReader.NavControlsView}}
-          <button {{action "navUp"}} class='btn'><i class="icon-arrow-up"></i></button>
-          <button {{action "toggleStar"}} {{bindAttr disabled="buttonDisabled"}} class='btn'>
-            <i {{bindAttr class="starClass"}}></i>
-          </button>
-          <button {{action "toggleRead"}} {{bindAttr disabled="buttonDisabled"}} class='btn'>
-            <i {{bindAttr class="readClass"}}></i>
-          </button>
-          <button {{action "navDown"}} class='btn'><i class="icon-arrow-down"></i></button>
+          <div class="a">
+            <button {{action "markAllRead"}} class='btn'><i class="icon-ok"></i></button>
+          </div>
+          <div class="b">
+            <button {{action "navUp"}} class='btn'><i class="icon-arrow-up"></i></button>
+            <button {{action "toggleStar"}} {{bindAttr disabled="buttonDisabled"}} class='btn'>
+              <i {{bindAttr class="starClass"}}></i>
+            </button>
+            <button {{action "toggleRead"}} {{bindAttr disabled="buttonDisabled"}} class='btn'>
+              <i {{bindAttr class="readClass"}}></i>
+            </button>
+            <button {{action "navDown"}} class='btn'><i class="icon-arrow-down"></i></button>
+          </div>
+          <div class="c">
+          </div>
+          <div class="d">
+            <button {{action "updateFromServer"}} class='btn'><i class="icon-refresh"></i></button>
+          </div>
         {{/view}}
       </script>
    

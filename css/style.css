@@ -61,11 +61,28 @@ section.mainContent div {
   margin-top: 5px;
 }
 
+.controls div.a {
+  height: 35%;
+}
+
+.controls div.b {
+  height: 25%;
+}
+
+.controls div.c {
+  height: 25%;
+}
+
+.controls div.d {
+  height: 10%;
+}
+
 .summaries {
   box-sizing: border-box;
   padding: 10px;
   overflow-y: scroll;
   width: 300px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .summary {
@@ -100,6 +117,7 @@ section.mainContent div {
   -webkit-box-flex: 1;
   overflow-y: scroll;
   padding-left: 10px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .entry {

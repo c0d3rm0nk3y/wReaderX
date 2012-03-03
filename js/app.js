@@ -1,5 +1,6 @@
 var WReader = Em.Application.create({
   ready: function() {
+    window.scrollTo(0);
     WReader.settingsController.loadSettings();
     //WReader.itemsController.loadItems();
     WReader.GetItemsFromDataStore();
@@ -13,7 +14,7 @@ WReader.GetItemsFromDataStore = function() {
 
 WReader.GetItemsFromServer = function() {
   $.ajax({
-    url: 'fake-data.json',
+    url: 'fake-data.js',
     dataType: 'json',
     success: function(data) {
       var items = data.map(function(obj) {
@@ -36,7 +37,9 @@ WReader.Settings = Em.Object.extend({
 
 WReader.settingsController = WReader.Settings.create({
   loadSettings: function() {
-
+    if (Modernizr.touch) {
+      this.tabletControls = true;
+    }
   },
   saveSettings: function() {
 
@@ -105,7 +108,7 @@ WReader.itemsController = Em.ArrayController.create({
 
   loadItems: function() {
     $.ajax({
-      url: 'fake-data.json',
+      url: 'fake-data.js',
       dataType: 'json',
       success: function(data) {
         var items = data.map(function(obj) {
@@ -199,6 +202,10 @@ WReader.SummaryListView = Em.View.extend({
     var content = this.get('content');
     WReader.selectedItemController.select(content);
   },
+  touch: function(evt) {
+    var content = this.get('content');
+    WReader.selectedItemController.select(content);
+  },
   active: function() {
     var selectedItem = WReader.selectedItemController.get('selectedItem');
     var content = this.get('content');
@@ -254,6 +261,12 @@ WReader.NavControlsView = Em.View.extend({
   },
   toggleRead: function(event) {
     WReader.selectedItemController.toggleRead();
+  },
+  markAllRead: function(event) {
+    console.log("NYI");
+  },
+  updateFromServer: function(event) {
+    console.log("NYI");
   },
   starClass: function() {
     var selectedItem = WReader.selectedItemController.get('selectedItem');
