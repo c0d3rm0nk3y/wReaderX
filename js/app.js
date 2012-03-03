@@ -292,7 +292,6 @@ WReader.HandleSpaceKey = function() {
   var winHeight = $(window).height();
   var curScroll = $('.entries').scrollTop();
   var scroll = curScroll + winHeight;
-  console.log(scroll, itemHeight);
   if (scroll < itemHeight) {
     $('.entries').scrollTop(scroll);
   } else {
