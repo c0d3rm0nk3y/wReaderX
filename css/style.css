@@ -61,20 +61,26 @@ section.mainContent div {
   margin-top: 5px;
 }
 
-.controls div.a {
-  height: 35%;
+.tControls {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
-.controls div.b {
-  height: 25%;
+.controls div.top {
+  min-height: 50px;
+  -webkit-box-flex: 1;
 }
 
-.controls div.c {
-  height: 25%;
+.controls div.middle {
+  min-height: 185px;
+  -webkit-box-flex: 2;
 }
 
-.controls div.d {
-  height: 10%;
+.controls div.bottom {
+  min-height: 50px;
+  -webkit-box-flex: 1;
+  display: -webkit-box;
+  -webkit-box-align: end;
 }
 
 .summaries {

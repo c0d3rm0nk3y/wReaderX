@@ -72,10 +72,11 @@
     
       <script type="text/x-handlebars">
         {{#view WReader.NavControlsView}}
-          <div class="a">
+        <div class="tControls">
+          <div class="top">
             <button {{action "markAllRead"}} class='btn'><i class="icon-ok"></i></button>
           </div>
-          <div class="b">
+          <div class="middle">
             <button {{action "navUp"}} class='btn'><i class="icon-arrow-up"></i></button>
             <button {{action "toggleStar"}} {{bindAttr disabled="buttonDisabled"}} class='btn'>
               <i {{bindAttr class="starClass"}}></i>
@@ -85,11 +86,10 @@
             </button>
             <button {{action "navDown"}} class='btn'><i class="icon-arrow-down"></i></button>
           </div>
-          <div class="c">
-          </div>
-          <div class="d">
+          <div class="bottom">
             <button {{action "updateFromServer"}} class='btn'><i class="icon-refresh"></i></button>
           </div>
+        </div>
         {{/view}}
       </script>
    

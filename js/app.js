@@ -219,7 +219,8 @@ WReader.SummaryListView = Em.View.extend({
   }.property('WReader.itemsController.@each.read'),
   formattedDate: function() {
     var date = this.get('content').get('pub_date');
-    return moment(date).format("MMMM Do YYYY, h:mm a");
+    //return moment(date).format("MMMM Do YYYY, h:mm a");
+    return moment(date).fromNow();
   }.property('WReader.selectedItemController.selectedItem')
 });
 
@@ -238,7 +239,7 @@ WReader.EntryItemView = Em.View.extend({
   formattedDate: function() {
     var date = this.get('content').get('pub_date');
     var result = moment(date).format("MMMM Do YYYY, h:mm a");
-    result += " (" + moment(date).fromNow() + ")";
+    //result += " (" + moment(date).fromNow() + ")";
     return result;
   }.property('WReader.selectedItemController.selectedItem')
 });
