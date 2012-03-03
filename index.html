@@ -45,6 +45,8 @@
           </a>
           <ul class="nav">
             <li class="divider-vertical"></li>
+            <li class="itemCount"><a href="#">{{WReader.itemsController.itemCount}} Items</a></li>
+            <li class="divider-vertical"></li>
             <li class="itemCount"><a href="#">{{WReader.itemsController.unreadCount}} Unread</a></li>
             <li class="divider-vertical"></li>
             <li class="itemCount"><a href="#">{{WReader.itemsController.starredCount}} Starred</a></li>
@@ -66,9 +68,9 @@
     </script>
   </header>
   <section class="mainContent">
-    <section class="controls navbar">
+    
       <script type="text/x-handlebars">
-        {{#view WReader.NavControlsView contentBinding="this"}}
+        {{#view WReader.NavControlsView}}
           <button {{action "navUp"}} class='btn'><i class="icon-arrow-up"></i></button>
           <button {{action "toggleStar"}} {{bindAttr disabled="buttonDisabled"}} class='btn'>
             <i {{bindAttr class="starClass"}}></i>
@@ -79,48 +81,50 @@
           <button {{action "navDown"}} class='btn'><i class="icon-arrow-down"></i></button>
         {{/view}}
       </script>
-    </section>
+   
     <section class="summaries">
       <script type="text/x-handlebars">
-        {{#each WReader.itemsController}}
-          {{#view WReader.SummaryListView contentBinding="this"}}
-            <div class="row-fluid">
-              <div class="span4 pub-name">
-                {{content.pub_name}}
+          {{#each WReader.itemsController}}
+            {{#view WReader.SummaryListView contentBinding="this"}}
+              <div class="row-fluid">
+                <div class="span4 pub-name">
+                  {{content.pub_name}}
+                </div>
+                <div class="span8 pub-date">
+                  {{formattedDate}}
+                </div>
               </div>
-              <div class="span8 pub-date">
-                {{formattedDate}}
-              </div>
-            </div>
-            <h3 class="pub-title">{{content.title}}</h3>
-            <p class="pub-desc">{{content.short_desc}}</p>
-          {{/view}}
-        {{/each}}
+              <h3 class="pub-title">{{content.title}}</h3>
+              <p class="pub-desc">{{{content.short_desc}}}</p>
+            {{/view}}
+          {{/each}}
       </script>
     </section>
 
     <section class="entries">
       <script type="text/x-handlebars">
-        
-          {{#each WReader.itemsController}}
-            {{#view WReader.EntryListView contentBinding="this"}}
-              <div class="row-fluid">
-                <div class="span8">{{formattedDate}}</div>
-                  <div class="span4 actions">
-                    {{view Em.Checkbox class="read" valueBinding="content.read"}}
-                    {{view Em.Checkbox class="star" valueBinding="content.starred"}}
-                    <a target="_blank" {{bindAttr href="content.item_link"}}><i class="icon-share"></i></a>
-                  </div>
+        {{#if WReader.selectedItemController.selectedItem}}
+          {{#view WReader.EntryItemView}}
+            <div class="row-fluid">
+              <div class="span8">{{formattedDate}}</div>
+                <div class="span4 actions">
+                  {{view Em.Checkbox class="read" valueBinding="content.read"}}
+                  {{view Em.Checkbox class="star" valueBinding="content.starred"}}
+                  <a target="_blank" {{bindAttr href="content.item_link"}}><i class="icon-share"></i></a>
                 </div>
-                <h2>{{content.title}}</h2>
-                <span class="author">{{content.pub_author}}</span> - <span class="pub-name">{{content.pub_name}}</span>
-                <hr />
-                <p class="post-content">{{content.content}}</p>
-              {{/view}}
-            {{/each}}
+              </div>
+              <h2>{{content.title}}</h2>
+              <span class="author">{{content.pub_author}}</span> - <span class="pub-name">{{content.pub_name}}</span>
+              <hr />
+              <p class="post-content">{{{content.content}}}</p>
+            {{/view}}
+          {{else}}
+            <div class="nothingSelected">
+              <img src="img/sadpanda.png" alt="Sad Panda">
+              <p>Nothing selected.</p>
+            </div>
+          {{/if}}
       </script>
-      <div class="extraSpace">
-      </div>
     </section>
   </section>
 
