@@ -61,6 +61,7 @@ section.mainContent div {
   margin-top: 5px;
 }
 
+
 .tControls {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -68,11 +69,15 @@ section.mainContent div {
 
 .controls div.top {
   min-height: 50px;
+  display: -webkit-box;
+  -webkit-box-align: start;
   -webkit-box-flex: 1;
 }
 
 .controls div.middle {
   min-height: 185px;
+  display: -webkit-box;
+  -webkit-box-align: center;
   -webkit-box-flex: 2;
 }
 
