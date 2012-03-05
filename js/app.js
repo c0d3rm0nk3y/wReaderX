@@ -13,10 +13,11 @@ var WReader = Em.Application.create({
 });
 
 WReader.GetItemsFromDataStore = function() {
-
+  WReader.itemsController.showDefault();
 };
 
 WReader.GetItemsFromServer = function() {
+  console.log("GetItemsFromServer()");
   $.ajax({
     url: 'fake-data.js',
     dataType: 'json',
@@ -29,11 +30,12 @@ WReader.GetItemsFromServer = function() {
 
     error: function() {
 
+    },
+    complete: function() {
+      WReader.itemsController.showDefault();
     }
   });
 };
-
-WReader.GetItemsFromServer();
 
 WReader.Settings = Em.Object.extend({
   tabletControls: false
@@ -68,8 +70,16 @@ WReader.itemsController = Em.ArrayController.create({
   content: [],
 
   filterBy: function(key, value) {
-    this.set('content', WReader.dataController.filterProperty('read', true));
-    //this.set('content', WReader.dataController.filterProperty(key, value));
+    //this.set('content', WReader.dataController.filterProperty('read', true));
+    this.set('content', WReader.dataController.filterProperty(key, value));
+  },
+
+  clearFilter: function() {
+    this.set('content', WReader.dataController.get('content'));
+  },
+
+  showDefault: function() {
+    this.set('content', WReader.dataController.get('content'));
   },
 
   itemCount: function() {
@@ -187,11 +197,6 @@ WReader.selectedItemController = Em.Object.create({
     if (nextItem) {
       this.select(nextItem);
     }
-  },
-
-  scrollAndNext: function() {
-    console.log('scroll first');
-    this.next();
   }
 });
 
@@ -233,7 +238,7 @@ WReader.SummaryListView = Em.View.extend({
   read: function() {
     var read = this.get('content').get('read');
     return read;
-  }.property('WReader.TestController.@each.read'),
+  }.property('WReader.itemsController.@each.read'),
   formattedDate: function() {
     var date = this.get('content').get('pub_date');
     //return moment(date).format("MMMM Do YYYY, h:mm a");
@@ -269,6 +274,42 @@ WReader.UserView = Em.View.extend({
   classNames: ['modal', 'fade']
 });
 
+WReader.NavBarView = Em.View.extend({
+  itemCount: function() {
+    return WReader.dataController.get('itemCount');
+  }.property('WReader.dataController.itemCount'),
+  unreadCount: function() {
+    return WReader.dataController.get('unreadCount');
+  }.property('WReader.dataController.unreadCount'),
+  starredCount: function() {
+    return WReader.dataController.get('starredCount');
+  }.property('WReader.dataController.starredCount'),
+  readCount: function() {
+    return WReader.dataController.get('readCount');
+  }.property('WReader.dataController.readCount'),
+  showAll: function() {
+    WReader.itemsController.clearFilter();
+  },
+  showUnread: function() {
+    WReader.itemsController.filterBy('read', false);
+  },
+  showStarred: function() {
+    WReader.itemsController.filterBy('starred', true);
+  },
+  showRead: function() {
+    WReader.itemsController.filterBy('read', true);
+  },
+  showSettings: function() {
+    console.log("NYI - showSettings()");
+  },
+  showUserConfig: function() {
+    console.log("NYI - showUserConfig()");
+  },
+  refresh: function() {
+    WReader.GetItemsFromServer();
+  }
+});
+
 WReader.NavControlsView = Em.View.extend({
   tagName: 'section',
   classNames: ['controls'],
@@ -291,8 +332,8 @@ WReader.NavControlsView = Em.View.extend({
   markAllRead: function(event) {
     WReader.itemsController.markAllRead();
   },
-  updateFromServer: function(event) {
-    console.log("NYI");
+  refresh: function(event) {
+    WReader.GetItemsFromServer();
   },
   starClass: function() {
     var selectedItem = WReader.selectedItemController.get('selectedItem');

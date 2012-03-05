@@ -38,6 +38,7 @@
  
   <header>
     <script type="text/x-handlebars">
+    {{#view WReader.NavBarView}}
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
@@ -46,28 +47,29 @@
           </a>
           <ul class="nav">
             <li class="divider-vertical"></li>
-            <li class="itemCount"><a href="#">{{WReader.dataController.itemCount}} Items</a></li>
+            <li class="itemCount"><a {{action "showAll" on="click"}}>{{itemCount}} Items</a></li>
             <li class="divider-vertical"></li>
-            <li class="itemCount"><a href="#">{{WReader.dataController.unreadCount}} Unread</a></li>
+            <li class="itemCount"><a {{action "showUnread" on="click"}}>{{unreadCount}} Unread</a></li>
             <li class="divider-vertical"></li>
-            <li class="itemCount"><a href="#">{{WReader.dataController.starredCount}} Starred</a></li>
+            <li class="itemCount"><a {{action "showStarred" on="click"}}>{{starredCount}} Starred</a></li>
             <li class="divider-vertical"></li>
-            <li class="itemCount"><a href="#">{{WReader.dataController.readCount}} Read</a></li>
+            <li class="itemCount"><a {{action "showRead" on="click"}}>{{readCount}} Read</a></li>
             <li class="divider-vertical"></li>
           </ul>
           <form class="navbar-search pull-left" id="navSearch">
             <input type="text" class="search-query" placeholder="Search">
           </form>
           <ul class="nav pull-right">
-            <li><a href="#"><i class="icon-cog icon-white"></i></a></li>
+            <li><a {{action "showSettings" on="click"}}><i class="icon-cog icon-white"></i></a></li>
             <!--
-            <li><a href="#"><i class="icon-user icon-white"></i></a></li>
+            <li><a {{action "showUserConfig" on="click"}}><i class="icon-user icon-white"></i></a></li>
             -->
-            <li><a href="#"><i class="icon-refresh icon-white"></i></a></li>
+            <li><a {{action "refresh" on="click"}}><i class="icon-refresh icon-white"></i></a></li>
           </ul>
         </div>
       </div>
     </div>
+    {{/view}}
     </script>
   </header>
   <section class="mainContent">
@@ -89,7 +91,7 @@
             <button {{action "navDown"}} class='btn'><i class="icon-arrow-down"></i></button>
           </div>
           <div class="bottom">
-            <button {{action "updateFromServer"}} class='btn'><i class="icon-refresh"></i></button>
+            <button {{action "refresh"}} class='btn'><i class="icon-refresh"></i></button>
           </div>
         </div>
         {{/view}}
@@ -97,13 +99,13 @@
    
     <section class="summaries">
       <script type="text/x-handlebars">
-          {{#each WReader.TestController}}
+          {{#each WReader.itemsController}}
             {{#view WReader.SummaryListView contentBinding="this"}}
               <div class="row-fluid">
-                <div class="span4 pub-name">
+                <div class="span6 pub-name">
                   {{content.pub_name}}
                 </div>
-                <div class="span8 pub-date">
+                <div class="span6 pub-date">
                   {{formattedDate}}
                 </div>
               </div>
