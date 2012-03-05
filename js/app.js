@@ -1,10 +1,14 @@
 var WReader = Em.Application.create({
   ready: function() {
+    //On mobile devices, hide the address bar
     window.scrollTo(0);
+
     WReader.settingsController.loadSettings();
-    //WReader.itemsController.loadItems();
     WReader.GetItemsFromDataStore();
     WReader.GetItemsFromServer();
+
+    // Call the superclass's `ready` method.
+    this._super();
   }
 });
 
@@ -19,7 +23,7 @@ WReader.GetItemsFromServer = function() {
     success: function(data) {
       var items = data.map(function(obj) {
         var item = WReader.Item.create(obj);
-        WReader.itemsController.addItem(item);
+        WReader.dataController.addItem(item);
       });
     },
 
@@ -61,6 +65,32 @@ WReader.Item = Em.Object.extend({
 });
 
 WReader.itemsController = Em.ArrayController.create({
+  content: [],
+
+  filterBy: function(key, value) {
+    this.set('content', WReader.dataController.filterProperty('read', true));
+    //this.set('content', WReader.dataController.filterProperty(key, value));
+  },
+
+  itemCount: function() {
+    return this.get('length');
+  }.property('@each'),
+
+  readCount: function() {
+    return this.filterProperty('read', true).get('length');
+  }.property('@each.read'),
+
+  unreadCount: function() {
+    return this.filterProperty('read', false).get('length');
+  }.property('@each.read'),
+
+  starredCount: function() {
+    return this.filterProperty('starred', true).get('length');
+  }.property('@each.starred')
+
+});
+
+WReader.dataController = Em.ArrayController.create({
   content: [],
 
   addItem: function(item) {
@@ -106,21 +136,8 @@ WReader.itemsController = Em.ArrayController.create({
     return this.filterProperty('starred', true).get('length');
   }.property('@each.starred'),
 
-  loadItems: function() {
-    $.ajax({
-      url: 'fake-data.js',
-      dataType: 'json',
-      success: function(data) {
-        var items = data.map(function(obj) {
-          var item = WReader.Item.create(obj);
-          WReader.itemsController.addItem(item);
-        });
-      },
-
-      error: function() {
-
-      }
-    });
+  markAllRead: function() {
+    this.setEach('read', true);
   }
 });
 
@@ -197,7 +214,7 @@ WReader.SummaryListView = Em.View.extend({
   tagName: 'article',
   classNames: ['well', 'summary'],
   classNameBindings: ['active', 'read', 'prev', 'next'],
-  contentBinding: 'WReader.itemsController.content',
+  /*contentBinding: 'WReader.itemsController.content',*/
   click: function(evt) {
     var content = this.get('content');
     WReader.selectedItemController.select(content);
@@ -216,7 +233,7 @@ WReader.SummaryListView = Em.View.extend({
   read: function() {
     var read = this.get('content').get('read');
     return read;
-  }.property('WReader.itemsController.@each.read'),
+  }.property('WReader.TestController.@each.read'),
   formattedDate: function() {
     var date = this.get('content').get('pub_date');
     //return moment(date).format("MMMM Do YYYY, h:mm a");
@@ -244,6 +261,14 @@ WReader.EntryItemView = Em.View.extend({
   }.property('WReader.selectedItemController.selectedItem')
 });
 
+WReader.SettingsView = Em.View.extend({
+  classNames: ['modal', 'fade']
+});
+
+WReader.UserView = Em.View.extend({
+  classNames: ['modal', 'fade']
+});
+
 WReader.NavControlsView = Em.View.extend({
   tagName: 'section',
   classNames: ['controls'],
@@ -264,7 +289,7 @@ WReader.NavControlsView = Em.View.extend({
     WReader.selectedItemController.toggleRead();
   },
   markAllRead: function(event) {
-    console.log("NYI");
+    WReader.itemsController.markAllRead();
   },
   updateFromServer: function(event) {
     console.log("NYI");
@@ -295,11 +320,6 @@ WReader.NavControlsView = Em.View.extend({
     return true;
   }.property('WReader.selectedItemController.selectedItem')
 });
-
-function boo() {
-  
-
-}
 
 WReader.HandleSpaceKey = function() {
   var itemHeight = $('.entry.active').height() + 60;
